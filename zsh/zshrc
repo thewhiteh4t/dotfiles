@@ -20,13 +20,17 @@ compinit
 line1=%F{cyan}$(echo -e '\u250C')%F{reset}
 line2=%F{cyan}$(echo -e '\u251C\u2500')%F{reset}
 line3=%F{cyan}$(echo -e '\u2514\u2500')%F{reset}
-divider=%F{cyan}$(printf '%.s\u2500' {2..$(tput cols)})%F{reset}
+divider=%F{cyan}$(printf '%.s\u2500' {2..$num_cols})%F{reset}
 newline=$'\n'
 input=%F{cyan}$(echo -e '\u25C9 ')%F{reset}
 user="%F{cyan}[%F{green}%n%F{reset}%F{cyan}]-%F{reset}"
 dir="%F{cyan}[%F{red}%~%b%F{reset}%F{cyan}]%F{reset}"
 
-function precmd() { divider=%F{cyan}$(printf '%.s\u2500' {2..$(tput cols)})%F{reset} }
+function precmd() 
+	{ 
+		let "num_cols = $(tput cols) / 2"
+		divider=%F{cyan}$(printf '%.s\u2500' {2..$num_cols})%F{reset} 
+	}
 
 PROMPT='${line1}${divider}${newline}${line2}${user}${dir}${newline}${line3}${input}'
 
@@ -40,3 +44,8 @@ bindkey "\e[F" end-of-line
 bindkey "^[[3~" delete-char
 
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+random-string()
+{
+	cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-32} | head -n 1
+}
